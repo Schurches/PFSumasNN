@@ -150,6 +150,8 @@ hartfortDF = hartfortDF.loc[lambda x: x.userID != '-LaQlc1fC7y-HDX9BHFG']
 hartfortDF = hartfortDF.reset_index(drop=True)
 
 #Obteniendo mediana para límite de score
+#sns.FacetGrid(hartfortDF, col='loID', hue='grado')#, hue='loID')
+
 timeMedianPerGrade = hartfortDF.groupby(['loID','grado'])['tiempo'].median();
 timesMedianDF = timeMedianPerGrade.reset_index();
 hartfortDF['score'] = hartfortDF.apply(answerScore,axis=1);
@@ -176,8 +178,6 @@ LOIntensitiesPerUser = LOIntensitiesPerUser.set_index('userID');
 LOIntensitiesPerUser = LOIntensitiesPerUser.round(1);
 generalUserInfo[['LOIN0','LOIN1','LOIN2','LOIN3','LOIN4']] = LOIntensitiesPerUser[['LOI0','LOI1','LOI2','LOI3','LOI4']];
 
-
-
 #Normalizing 
 #normalizedTime = generalUserInfo[['LOIN0','LOIN1','LOIN2','LOIN3','LOIN4']].copy();
 #normalizedTime = preprocessing.normalize(normalizedTime,axis=1);
@@ -192,17 +192,17 @@ X_train = sc.fit_transform(X_train)
 X_test = sc.transform(X_test)
 
 classifier = Sequential();
-classifier.add(Dense(input_dim=3, activation='relu', kernel_initializer='uniform', units=10));
-classifier.add(Dense(kernel_initializer='normal',units=5))
-classifier.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['mse','mae']);
+classifier.add(Dense(input_dim=3, activation='relu', kernel_initializer='normal', units=10));
+classifier.add(Dense(kernel_initializer='uniform',units=5))
+classifier.compile(optimizer='sgd', loss='mean_squared_error', metrics=['mse','mae']);
 classifier.fit(X_train, y_train, batch_size=5, epochs=50)
 y_pred = classifier.predict(X_test);
 
 
-filename = 'neuralnet'
-outfile = open(filename,'wb')
-pickle.dump(classifier,outfile)
-outfile.close()
+#filename = 'neuralnet'
+#outfile = open(filename,'wb')
+#pickle.dump(classifier,outfile)
+#outfile.close()
 
 
 
